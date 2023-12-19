@@ -1,9 +1,20 @@
-const user = require('../schema/user')
+require('dotenv').config()
+
+const { user, tokenModel } = require('../schema/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const emailUnique = async (email) => {
   const User = await user.exists({ email })
   return User
+}
+
+const generateAccessToken = (email) => {
+  return jwt.sign(email, process.env.ACCESS_TOKEN_SECRET)
+}
+
+const generateRefreshToken = (email) => {
+  return jwt.sign(email, process.env.REFRESH_TOKEN_SECRET)
 }
 
 const signup = async (req, res) => {
@@ -34,4 +45,30 @@ const signup = async (req, res) => {
   }
 }
 
-module.exports = { signup }
+const login = async (req, res) => {
+  const { email, password } = req.body
+  if (!email || !password)
+    return res.status(400).send('Email and password field required!')
+  try {
+    const User = await user.findOne({ email }, { password: 1 })
+    const _id = User['_id']
+    // console.log(hashedPassword)
+    const isMatch = await bcrypt.compare(password, User['password'])
+    if (!isMatch)
+      return res.status(403).json({ password: 'incorrect password' })
+    const accessToken = generateAccessToken({ _id })
+    const refreshToken = generateRefreshToken({ _id })
+    const token = await tokenModel.create({
+      user: User['_id'],
+      refreshToken,
+      lastAccessToken: accessToken,
+    })
+    await token.save()
+    console.log(accessToken, refreshToken)
+    return res.json({ accessToken, refreshToken })
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+module.exports = { signup, login }

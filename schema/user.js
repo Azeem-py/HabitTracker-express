@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
 })
 
 const tokenSchema = new mongoose.Schema({
+  user: { type: mongoose.SchemaTypes.ObjectId, ref: 'user' },
   refreshToken: {
     type: String,
     required: true,
