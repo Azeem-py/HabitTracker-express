@@ -7,9 +7,29 @@ const HabitSchema = new mongoose.Schema({
   },
   name: String,
   goal: String,
+  startingDate: {
+    type: Date,
+    required: true,
+    default: new Date(),
+  },
   days: Number,
   interval: Number,
+  // habitSchedule: String,
+})
+
+const ScheduleSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'user',
+  },
+  habit: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'habit',
+  },
+  date: Date,
+  done: Boolean,
 })
 
 const Habit = mongoose.model('Habit', HabitSchema)
-module.exports = { Habit }
+const Schedule = mongoose.model('Schedule', ScheduleSchema)
+module.exports = { Habit, Schedule }

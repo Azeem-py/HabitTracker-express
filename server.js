@@ -19,5 +19,6 @@ authRouter.post('/login', login)
 app.use('/auth', authRouter)
 
 app.get('/create', authenticateToken, createHabit)
+// app.get('/create', authenticateToken, createHabit)
 
 app.listen(3000, () => console.log('listening at 3000'))
