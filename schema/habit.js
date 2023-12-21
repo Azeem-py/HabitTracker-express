@@ -14,7 +14,6 @@ const HabitSchema = new mongoose.Schema({
   },
   days: Number,
   interval: Number,
-  // habitSchedule: String,
 })
 
 const ScheduleSchema = new mongoose.Schema({
@@ -24,7 +23,7 @@ const ScheduleSchema = new mongoose.Schema({
   },
   habit: {
     type: mongoose.SchemaTypes.ObjectId,
-    ref: 'habit',
+    ref: 'Habit',
   },
   date: Date,
   done: Boolean,

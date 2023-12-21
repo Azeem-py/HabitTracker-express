@@ -50,7 +50,7 @@ const login = async (req, res) => {
   if (!email || !password)
     return res.status(400).send('Email and password field required!')
   try {
-    const User = await user.findOne({ email }, { password: 1 })
+    const User = await user.findOne({ email }, { password: 1, name: 1 })
     const _id = User['_id']
     // console.log(hashedPassword)
     const isMatch = await bcrypt.compare(password, User['password'])
@@ -64,8 +64,7 @@ const login = async (req, res) => {
       lastAccessToken: accessToken,
     })
     await token.save()
-    console.log(accessToken, refreshToken)
-    return res.json({ accessToken, refreshToken })
+    return res.json({ accessToken, name: User['name'] })
   } catch (error) {
     console.log(error.message)
   }
